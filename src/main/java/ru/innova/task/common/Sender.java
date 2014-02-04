@@ -3,6 +3,7 @@ package ru.innova.task.common;
 import java.io.IOException;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 
@@ -10,14 +11,14 @@ import ru.innova.task.network.NetworkSender;
 
 public class Sender extends AbstractWorker {
     private static final int WAIT_TIMEOUT = 500;
-    private static volatile int counter = 0;
+    private static final AtomicInteger counter = new AtomicInteger(0);
     private final BlockingQueue<Integer> input;
     private final NetworkSender output;
     private final DataController controller;
     private final CountDownLatch startSignal;
     
     public Sender(BlockingQueue<Integer> input, NetworkSender output, DataController controller, String name, CountDownLatch startSignal) {
-        super(++counter, name);
+        super(counter.incrementAndGet(), name);
         this.input = input;
         this.output = output;
         this.controller = controller;

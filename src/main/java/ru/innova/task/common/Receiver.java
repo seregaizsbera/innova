@@ -4,6 +4,7 @@ import java.io.EOFException;
 import java.io.IOException;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 
 import ru.innova.task.network.NetworkReceiver;
@@ -14,7 +15,7 @@ import ru.innova.task.network.NetworkReceiver;
  * @author sergey
  */
 public class Receiver extends AbstractWorker {
-    private static volatile int counter = 0;
+    private static final AtomicInteger counter = new AtomicInteger(0);
     private final BlockingQueue<Integer> output;
     private final DataController controller;
     private final NetworkReceiver input;
@@ -25,12 +26,12 @@ public class Receiver extends AbstractWorker {
      * 
      * @param input объект, получающий данные по сети
      * @param output очередь для сохранения полученных данных
-     * @param controller объект, для сврерки данных, проходящих в различных направлениях
+     * @param controller объект, для сверки данных, проходящих в различных направлениях
      * @param name имя потока
      * @param startSignal объект, через который поток дожидается момента старта
      */
     public Receiver(NetworkReceiver input, BlockingQueue<Integer> output, DataController controller, String name, CountDownLatch startSignal) {
-        super(++counter, name);
+        super(counter.incrementAndGet(), name);
         this.output = output;
         this.input = input;
         this.controller = controller;
